@@ -1,6 +1,7 @@
 window.addEventListener('DOMContentLoaded', function () {
   'use strict';
 
+  countTimer('7 sept 2021');
   function countTimer(deadline) {
     let timerHours = document.querySelector('#timer-hours'),
       timerMinutes = document.querySelector('#timer-minutes'),
@@ -33,5 +34,5 @@ window.addEventListener('DOMContentLoaded', function () {
     }
     upDateClock();
   }
-  let idSetInterval = setInterval(countTimer, 1000, '19 aug 2021');
+  let idSetInterval = setInterval(countTimer, 1000, '7 sept 2021');
 });
