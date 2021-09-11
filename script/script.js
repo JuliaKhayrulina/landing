@@ -1,13 +1,14 @@
 window.addEventListener('DOMContentLoaded', function () {
   'use strict';
 
-  countTimer('7 sept 2021');
-  function countTimer(deadline) {
+  //==========таймер==============//
+
+  const countTimer = (deadline) => {
     let timerHours = document.querySelector('#timer-hours'),
       timerMinutes = document.querySelector('#timer-minutes'),
       timerSeconds = document.querySelector('#timer-seconds');
 
-    function getTimeRemaining() {
+    const getTimeRemaining = () => {
       let dateStop = new Date(deadline).getTime(),
         dateNow = new Date().getTime(),
         timeRemaining = (dateStop - dateNow) / 1000, //получаем разницу в мс / 1000 => в секунды
@@ -16,9 +17,9 @@ window.addEventListener('DOMContentLoaded', function () {
         hours = Math.floor(timeRemaining / 60 / 60);
 
       return { dateStop, dateNow, hours, minutes, seconds };
-    }
+    };
 
-    function upDateClock() {
+    const upDateClock = () => {
       let timer = getTimeRemaining();
 
       timerHours.textContent = ('0' + timer.hours).slice(-2);
@@ -31,8 +32,9 @@ window.addEventListener('DOMContentLoaded', function () {
         timerMinutes.textContent = '00';
         timerSeconds.textContent = '00';
       }
-    }
+    };
     upDateClock();
-  }
-  let idSetInterval = setInterval(countTimer, 1000, '7 sept 2021');
+  };
+  let idSetInterval = setInterval(countTimer, 1000, '12 sept 2021');
+  countTimer('12 sept 2021');
 });
