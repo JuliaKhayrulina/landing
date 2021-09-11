@@ -1,4 +1,4 @@
-window.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('DOMContentLoaded', () => {
   'use strict';
 
   //==========таймер==============//
@@ -37,4 +37,61 @@ window.addEventListener('DOMContentLoaded', function () {
   };
   let idSetInterval = setInterval(countTimer, 1000, '12 sept 2021');
   countTimer('12 sept 2021');
+
+  //===========Меню===============//
+
+  const toggleMenu = () => {
+    const menu = document.querySelector('menu');
+    menu.classList.toggle('active-menu');
+  };
+
+  //===========Popup===========//
+
+  const openPopup = () => {
+    const popup = document.querySelector('.popup');
+    popup.style.display = 'block';
+    if (document.body.clientWidth > 768) {
+      window.requestAnimationFrame(step);
+    }
+  };
+  const closePopup = () => {
+    const popup = document.querySelector('.popup'),
+      popupContent = document.querySelector('.popup-content');
+
+    popup.style.display = 'none';
+    popupContent.classList.remove('.popup-animate');
+    timer = 1;
+  };
+
+  //=====Анимация popup===========//
+  let timer = 1;
+
+  function step() {
+    const popupContent = document.querySelector('.popup-content'),
+      popupStyle = window.getComputedStyle(popupContent, null),
+      popupWidth = parseInt(popupStyle.getPropertyValue('width')),
+      stop = document.body.clientWidth / 2 - popupWidth / 2;
+
+    popupContent.classList.add('popup-animate');
+
+    timer++;
+    let progress = timer * 30;
+    if (progress < stop) {
+      document.querySelector('.popup-animate').style.left = progress + 'px';
+      document.querySelector('.popup-animate').style.opacity = progress / stop;
+      window.requestAnimationFrame(step);
+    }
+  }
+
+  //=========Обработчик===========//
+  const eventListeners = () => {
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+      if (target.closest('.menu')) toggleMenu();
+      if (target.closest('.close-btn') || target.closest('li')) toggleMenu();
+      if (target.closest('.popup-btn')) openPopup();
+      if (target.closest('.popup-close')) closePopup();
+    });
+  };
+  eventListeners();
 });
