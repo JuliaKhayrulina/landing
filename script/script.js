@@ -82,15 +82,32 @@ window.addEventListener('DOMContentLoaded', () => {
       window.requestAnimationFrame(step);
     }
   }
+  //==========Плавный скролл=========//
+  const smoothScroll = (target) => {
+    if (target.attributes.href.textContent !== '#close') {
+      const linkId = target.getAttribute('href').substr(1);
+      const it = document.getElementById(linkId);
+      it.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   //=========Обработчик===========//
   const eventListeners = () => {
     document.addEventListener('click', (e) => {
       const target = e.target;
+
       if (target.closest('.menu')) toggleMenu();
       if (target.closest('.close-btn') || target.closest('li')) toggleMenu();
       if (target.closest('.popup-btn')) openPopup();
       if (target.closest('.popup-close')) closePopup();
+      if (target.closest('li>a[href*="#"]')) {
+        e.preventDefault();
+        smoothScroll(target);
+      }
+      if (target.closest('img[src="images/scroll.svg"]')) {
+        e.preventDefault();
+        smoothScroll(target.parentNode);
+      }
     });
   };
   eventListeners();
