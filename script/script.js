@@ -42,9 +42,23 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const toggleMenu = () => {
     const menu = document.querySelector('menu');
-    menu.classList.toggle('active-menu');
+
+    function handlerMenu() {
+      menu.classList.toggle('active-menu');
+    }
+
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+
+      if (target.closest('.menu')) handlerMenu();
+      if (target.closest('.close-btn') || target.closest('li')) handlerMenu();
+      if (!target.closest('.active-menu') && !target.closest('.menu')) {
+        document.querySelector('menu').classList.remove('active-menu');
+      }
+    });
   };
 
+  toggleMenu();
   //===========Popup===========//
 
   const openPopup = () => {
@@ -62,6 +76,17 @@ window.addEventListener('DOMContentLoaded', () => {
     popupContent.classList.remove('.popup-animate');
     timer = 1;
   };
+
+  const togglePopup = () => {
+    document.addEventListener('click', (e) => {
+      const target = e.target;
+
+      if (target.closest('.popup-btn')) openPopup();
+      if (target.closest('.popup-close')) closePopup();
+      if (target.matches('.popup')) closePopup();
+    });
+  };
+  togglePopup();
 
   //=====Анимация popup===========//
   let timer = 1;
@@ -83,32 +108,150 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   }
   //==========Плавный скролл=========//
-  const smoothScroll = (target) => {
-    if (target.attributes.href.textContent !== '#close') {
+
+  const smoothScroll = () => {
+    const scrollIn = (target) => {
       const linkId = target.getAttribute('href').substr(1);
       const it = document.getElementById(linkId);
       it.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
+    };
 
-  //=========Обработчик===========//
-  const eventListeners = () => {
     document.addEventListener('click', (e) => {
-      const target = e.target;
-
-      if (target.closest('.menu')) toggleMenu();
-      if (target.closest('.close-btn') || target.closest('li')) toggleMenu();
-      if (target.closest('.popup-btn')) openPopup();
-      if (target.closest('.popup-close')) closePopup();
+      let target = e.target;
       if (target.closest('li>a[href*="#"]')) {
         e.preventDefault();
-        smoothScroll(target);
-      }
-      if (target.closest('img[src="images/scroll.svg"]')) {
+        scrollIn(target);
+      } else if (target.parentNode.closest('a[href="#service-block"]')) {
         e.preventDefault();
-        smoothScroll(target.parentNode);
+        scrollIn(target.parentNode);
       }
     });
   };
-  eventListeners();
+  smoothScroll();
+
+  //=========Табы=================//
+
+  const tabs = () => {
+    const tabHeader = document.querySelector('.service-header'),
+      tab = tabHeader.querySelectorAll('.service-header-tab'),
+      tabContent = document.querySelectorAll('.service-tab');
+
+    const toggleTabContent = (index) => {
+      for (let i = 0; i < tabContent.length; i++) {
+        if (index === i) {
+          tab[i].classList.add('active');
+          tabContent[i].classList.remove('d-none');
+        } else {
+          tab[i].classList.remove('active');
+          tabContent[i].classList.add('d-none');
+        }
+      }
+    };
+
+    tabHeader.addEventListener('click', (e) => {
+      let target = e.target;
+      target = target.closest('.service-header-tab');
+
+      if (target) {
+        tab.forEach((item, index) => {
+          if (item === target) {
+            toggleTabContent(index);
+          }
+        });
+      }
+    });
+  };
+  tabs();
+
+  //============Слайдер=========//
+
+  const slider = () => {
+    const slide = document.querySelectorAll('.portfolio-item'),
+      dotsList = document.querySelector('.portfolio-dots'),
+      slider = document.querySelector('.portfolio-content');
+
+    const createDots = () => {
+      let i = 0;
+      while (i++ < slide.length) {
+        const li = document.createElement('li');
+        li.classList.add('dot');
+        dotsList.appendChild(li);
+      }
+    };
+    createDots();
+
+    const dot = document.querySelectorAll('.dot');
+    let currentSlide = 0,
+      interval;
+
+    const prevSlide = (elem, index, strClass) => {
+      elem[index].classList.remove(strClass);
+    };
+    const nextSlide = (elem, index, strClass) => {
+      elem[index].classList.add(strClass);
+    };
+
+    const autoPlaySlide = () => {
+      prevSlide(slide, currentSlide, 'portfolio-item-active');
+      prevSlide(dot, currentSlide, 'dot-active');
+
+      currentSlide++;
+      if (currentSlide >= slide.length) {
+        currentSlide = 0;
+      }
+      nextSlide(slide, currentSlide, 'portfolio-item-active');
+      nextSlide(dot, currentSlide, 'dot-active');
+    };
+
+    const startSlide = (time = 3000) => {
+      interval = setInterval(autoPlaySlide, time);
+    };
+    const stopSlide = () => {
+      clearInterval(interval);
+    };
+
+    slider.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = e.target;
+
+      if (!target.matches('.portfolio-btn, .dot')) {
+        return;
+      }
+      prevSlide(slide, currentSlide, 'portfolio-item-active');
+      prevSlide(dot, currentSlide, 'dot-active');
+
+      if (target.matches('#arrow-right')) currentSlide++;
+      else if (target.matches('#arrow-left')) currentSlide--;
+      else if (target.matches('.dot')) {
+        dot.forEach((elem, index) => {
+          if (elem === target) {
+            currentSlide = index;
+          }
+        });
+      }
+      if (currentSlide >= slide.length) {
+        currentSlide = 0;
+      }
+
+      if (currentSlide < 0) {
+        currentSlide = slide.length - 1;
+      }
+      nextSlide(slide, currentSlide, 'portfolio-item-active');
+      nextSlide(dot, currentSlide, 'dot-active');
+    });
+
+    slider.addEventListener('mouseover', (e) => {
+      if (e.target.matches('.portfolio-btn') || e.target.matches('.dot')) {
+        stopSlide();
+      }
+    });
+    slider.addEventListener('mouseout', (e) => {
+      if (e.target.matches('.portfolio-btn') || e.target.matches('.dot')) {
+        startSlide();
+      }
+    });
+
+    startSlide(1500);
+  };
+  slider();
 });
