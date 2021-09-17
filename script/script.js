@@ -51,7 +51,9 @@ window.addEventListener('DOMContentLoaded', () => {
       const target = e.target;
 
       if (target.closest('.menu')) handlerMenu();
-      if (target.closest('.close-btn') || target.closest('li')) handlerMenu();
+      if (target.closest('.close-btn') || target.closest('li>a[href*="#"]')) {
+        handlerMenu();
+      }
       if (!target.closest('.active-menu') && !target.closest('.menu')) {
         document.querySelector('menu').classList.remove('active-menu');
       }
@@ -113,6 +115,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const scrollIn = (target) => {
       const linkId = target.getAttribute('href').substr(1);
       const it = document.getElementById(linkId);
+
       it.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
